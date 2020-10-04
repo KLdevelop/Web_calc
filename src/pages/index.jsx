@@ -4,69 +4,75 @@ import './index.scss';
 
 class Calc extends Component {
     state = {
-        isDot: false,
-        dotDCount: 0,
         isSecond: false,
         first: 0,
         second: 0
     };
 
     numType = (num) => {
-        const { first, second, isSecond, isDot, dotDCount } = this.state;
-        console.log(first, num, dotDCount)
+        const { first, second, isSecond } = this.state;
+        console.log(first, num)
         isSecond ? this.setState({
-            second : isDot ? second + num : second * 10 + num
+            second : second === 0 && num !== 0 ? '' + num : second + num
         }) : this.setState({
-            first : isDot ? first + num : first * 10 + num
+            first : first === 0 && num !== 0 ? '' + num : first + num
         });
-        if (isDot) {
-            this.setState({
-                dotDCount: dotDCount + 1
-            });
-        }
     };
 
     onCClick = () => {
         this.setState({
             first: 0,
             second: 0,
-            dotDCount: 0,
-            isDot: false,
             isSecond: false
         });
     };
 
     onDotClick = () => {
-        const { isSecond, first, second, dotDCount } = this.state;
-        isSecond ? this.state({
-            second: second + '.',
-            isDot: true
-        }) : this.setState({
-            first: first + '.',
-            isDot: true
+        const { isSecond, first, second} = this.state;
+        isSecond && !('' + second).includes('.') ? this.state({
+            second: second + '.'
+        }) : !('' + first).includes('.') && this.setState({
+            first: first + '.'
         });
     };
 
     onPMClick = () => {
-        const { first, second, isSecond, isDot } = this.state;
-        isSecond ? this.setState({
-            second: isDot ? (+second < 0 ? second.slice(1,) : '-' + second) : -second
-        }) : this.setState({
-            first: isDot ? (+first < 0 ? first.slice(1,) : '-' + first)  : -first
-        });
+        const { first, second, isSecond } = this.state;
+        if (isSecond && second !== 0) {
+            this.setState({
+                second: +second < 0 ? second.slice(1,) : '-' + second
+            });
+        }
+        if (!isSecond && first !== 0) {
+            this.setState({
+                first: +first < 0 ? first.slice(1,) : '-' + first
+            });
+        }
     }
 
     onCEClick = () => {
         const { isSecond } = this.state;
-        this.setState({
-            isDot: false,
-            dotDCount: 0
-        });
         isSecond ? this.setState({
             second: 0
         }) : this.setState({
             first: 0
         });
+    };
+
+    onDClick = () => {
+        const { first, second, isSecond } = this.state;
+        if (isSecond && second !== 0) {
+            this.setState({
+                second: second[0] === '-' && second.length === 2 || second === '-0.' ? 0 : 
+                    (second.length > 1 ? second.slice(0, second.length - 1) : 0)
+            });
+        }
+        if (!isSecond && first !== 0) {
+            this.setState({
+                first: first[0] === '-' && first.length === 2 || first === '-0.' ? 0 : 
+                    (first.length > 1 ? first.slice(0, first.length - 1) : 0)
+            });
+        }
     };
 
     render() {
@@ -86,7 +92,7 @@ class Calc extends Component {
                     <div className="leftBlock">
                         <Button onClick={ this.onCEClick }>CE</Button>
                         <Button onClick={ this.onCClick }>C</Button>
-                        <Button>D</Button>
+                        <Button onClick={ this.onDClick }>D</Button>
                         {
                             [7, 8, 9, 4, 5, 6, 1, 2, 3].map(el => (
                                 <Button className="num" onClick={ () => this.numType(el) }>{ el }</Button>
