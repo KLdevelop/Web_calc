@@ -6,7 +6,8 @@ $ff: 'Roboto', sans-serif;
     background: #E4E4E4;
     width: 355px;
     height: 371px;
-    margin-left: 100px;
+    margin-left: calc(50% - 355px / 2);
+    margin-top: calc(25% - 371px / 2);
     padding-left: 0.8px;
     .top {
         text-align: right;
@@ -18,6 +19,12 @@ $ff: 'Roboto', sans-serif;
         }
         .tFrst {
             font-weight: 300;
+            margin-bottom: unset;
+            margin-top: 6px;
+            font-size: 18px;
+        }
+        .bScnd{
+            margin-top: unset;
         }
     }
     .bttns {
