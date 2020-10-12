@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 import './index.scss';
 
 class Calc extends Component {
@@ -33,9 +33,9 @@ class Calc extends Component {
         }
         else {
             isSecond ? this.setState({
-                seconds : seconds == 0 && num != 0 ? `${num}` : `${ seconds }` + num
+                seconds : seconds === 0 ? `${num}` : `${ seconds }` + num
             }) : this.setState({
-                firsts : firsts == 0 && num != 0 ? `${num}`: `${ firsts }` + num
+                firsts : firsts === 0 ? `${num}`: `${ firsts }` + num
             });
         }
     };
@@ -118,24 +118,35 @@ class Calc extends Component {
         }
     };
 
+    greatestNum = (firsts, seconds) => {
+        const f = `${ firsts }`.indexOf('.') != -1 ? `${ firsts }`.split('.', 2)[1].length : 0;
+        const s = `${ seconds }`.indexOf('.') != -1 ? `${ seconds }`.split('.', 2)[1].length : 0;
+        return Math.max(f, s);
+    };
+    
     calcRes = () => {
         const { firsts, seconds, res } = this.state;
+        const isDot = (`${firsts}`.indexOf('.') != -1 || `${seconds}`.indexOf('.') != -1) ? true : false;
         switch (firsts[firsts.length - 1]) {
             case '+':
-                return res + +seconds;
+                return isDot ? parseFloat(res + +seconds).toFixed(this.greatestNum(res, seconds)) :
+                    res + +seconds;
             case '-':
-                return res - +seconds;
+                return isDot ? parseFloat(res - +seconds).toFixed(this.greatestNum(res, seconds)) :
+                    res - +seconds;
             case '*':
-                return res * +seconds;
+                return isDot ? parseFloat(res * +seconds).toFixed(this.greatestNum(res, seconds)) :
+                    res * +seconds;
             case '/':
-                return res / +seconds;
+                return isDot ? parseFloat(res / +seconds).toFixed(this.greatestNum(res, seconds)) :
+                    res / +seconds;
         }
     };
 
     onResSignClick = (sign) => {
         const { firsts } = this.state;
         this.setState({
-            firsts: firsts.slice(0, firsts.length - 2) + sign,
+            firsts: firsts.slice(0, firsts.length - 2) + ' ' + sign,
             isEq: false,
             isSecond: true
         });
@@ -220,39 +231,75 @@ class Calc extends Component {
     render() {
         const { isSecond, firsts, seconds } = this.state;
         return (
-            <div className="calc">
-                <div className="top">
-                    {
-                        isSecond && <div>
-                            <h1 className="tFrst">{ firsts }</h1>
-                            <h1 className="bScnd">{ seconds }</h1>
-                        </div> ||
-                        <h1 className="first">{ firsts }</h1>
-                    }
-                </div>
-                <div className="bttns">
-                    <div className="leftBlock">
-                        <Button onClick={ this.onCEClick }>CE</Button>
-                        <Button onClick={ this.onCClick }>C</Button>
-                        <Button onClick={ this.onDClick }>D</Button>
+            <>
+                <h1 className="topH">Calculator</h1>
+                <div className="calc">
+                    <div className="top">
                         {
-                            [7, 8, 9, 4, 5, 6, 1, 2, 3].map(el => (
-                                <Button className="num" onClick={ () => this.numType(el) }>{ el }</Button>
-                            ))
+                            isSecond && <div>
+                                <TextField 
+                                    className="tFrst"
+                                    value={ firsts }
+                                    fullWidth={ true }
+                                    variant="outlined"
+                                    InputProps={{
+                                        readOnly: true,
+                                    }}
+                                    classes={{
+                                        root: "textField"
+                                    }}
+                                />
+                                <TextField 
+                                    className="bScnd" 
+                                    value={ seconds } 
+                                    fullWidth={ true }
+                                    variant="outlined"
+                                    InputProps={{
+                                        readOnly: true,
+                                    }}
+                                    classes={{
+                                        root: "textField"
+                                    }}
+                                />
+                            </div> ||
+                            <TextField 
+                                className="first" 
+                                value={ firsts } 
+                                fullWidth={ true }
+                                variant="outlined"
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                                classes={{
+                                    root: "textField"
+                                }}
+                            />
                         }
-                        <Button onClick={ this.onPMClick }>+-</Button>
-                        <Button className="num" onClick={ () => this.numType(0) }>0</Button>
-                        <Button onClick={ this.onDotClick }>.</Button>
                     </div>
-                    <div className="rightBlock">
-                        <Button onClick={ this.onDelClick }>/</Button>
-                        <Button onClick={ this.onMulClick }>*</Button>
-                        <Button onClick={ this.onMinClick }>-</Button>
-                        <Button onClick={ this.onPlusClick }>+</Button>
-                        <Button onClick={ this.onEqClick }>=</Button>
+                    <div className="bttns">
+                        <div className="leftBlock">
+                            <Button onClick={ this.onCEClick }>CE</Button>
+                            <Button onClick={ this.onCClick }>C</Button>
+                            <Button onClick={ this.onDClick }>D</Button>
+                            {
+                                [7, 8, 9, 4, 5, 6, 1, 2, 3].map(el => (
+                                    <Button className="num" onClick={ () => this.numType(el) }>{ el }</Button>
+                                ))
+                            }
+                            <Button onClick={ this.onPMClick }>+-</Button>
+                            <Button className="num" onClick={ () => this.numType(0) }>0</Button>
+                            <Button onClick={ this.onDotClick }>.</Button>
+                        </div>
+                        <div className="rightBlock">
+                            <Button onClick={ this.onDelClick }>/</Button>
+                            <Button onClick={ this.onMulClick }>*</Button>
+                            <Button onClick={ this.onMinClick }>-</Button>
+                            <Button onClick={ this.onPlusClick }>+</Button>
+                            <Button onClick={ this.onEqClick }>=</Button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

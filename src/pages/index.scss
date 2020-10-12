@@ -1,35 +1,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
 
 $ff: 'Roboto', sans-serif;
+
+.topH {
+    text-align: center;
+    font-family: $ff;
+    font-weight: normal;
+    font-size: 28px;
+}
+
 .calc {
     display: inline-block;
     background: #E4E4E4;
     width: 355px;
     height: 371px;
-    margin-left: calc(50% - 355px / 2);
-    margin-top: calc(25% - 371px / 2);
+    margin-left: calc(50% - 355px / 2 - 10px);
+    margin-top: 20px;
     padding-left: 0.8px;
     .top {
         text-align: right;
-        h1 {
+        input {
             font-family: $ff;
             font-weight: normal;
             font-size: 42px;
-            margin-right: 3px;
+            height: 1px;
+            text-align: right;
         }
         .tFrst {
-            font-weight: 300;
-            margin-bottom: unset;
-            margin-top: 6px;
-            font-size: 18px;
+            input{
+                font-size: 18px;
+                font-weight: 300;
+            }
         }
-        .bScnd{
-            margin-top: unset;
+        .first {
+            margin-top: 38px;
+            margin-bottom: 6px;
+        }
+        .bScnd {
+            margin-bottom: 6px;
+        }
+        .textField {
+            fieldset {
+                border: none;
+            }
         }
     }
     .bttns {
-        margin-left: 3px;
-        margin-top: -26px;
+        margin-left: 3.2px;
         .leftBlock {
             float: left;
             display: grid;
