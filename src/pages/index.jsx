@@ -64,21 +64,24 @@ class Calc extends Component {
         const { firsts, seconds, isSecond, isEq } = this.state;
         if (isEq) {
             this.onCClick();
-            this.setState({
-                firsts: +seconds < 0 ? seconds.slice(1,) : '-' + seconds,
-                isRes: true,
-                isEq: true
-            });
-        }
-        else {
-            if (isSecond && seconds !== 0) {
+            if (seconds != 0)
+            {
                 this.setState({
-                    seconds: +seconds < 0 ? seconds.slice(1,) : '-' + seconds
+                    firsts: +seconds < 0 ? `${seconds}`.slice(1,) : `- ${seconds}`,
+                    isRes: true,
+                    isEq: true
                 });
             }
-            if (!isSecond && firsts !== 0) {
+        }
+        else {
+            if (isSecond && seconds != 0) {
                 this.setState({
-                    firsts: +firsts < 0 ? firsts.slice(1,) : '-' + firsts
+                    seconds: +seconds < 0 ? `${seconds}`.slice(1,) : `- ${seconds}`
+                });
+            }
+            if (!isSecond && firsts != 0) {
+                this.setState({
+                    firsts: +firsts < 0 ? `${firsts}`.slice(1,) : `- ${firsts}`
                 });
             }
         }
