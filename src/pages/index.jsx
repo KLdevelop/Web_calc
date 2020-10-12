@@ -67,21 +67,22 @@ class Calc extends Component {
             if (seconds != 0)
             {
                 this.setState({
-                    firsts: +seconds < 0 ? `${seconds}`.slice(1,) : `- ${seconds}`,
+                    firsts: `${seconds}`.indexOf('-') != -1 ? `${seconds}`.slice(1,) : `-${seconds}`,
                     isRes: true,
-                    isEq: true
+                    isEq: false,
+                    seconds: 0
                 });
             }
         }
         else {
             if (isSecond && seconds != 0) {
                 this.setState({
-                    seconds: +seconds < 0 ? `${seconds}`.slice(1,) : `- ${seconds}`
+                    seconds: `${seconds}`.indexOf('-') != -1 ? `${seconds}`.slice(1,) : `-${seconds}`
                 });
             }
             if (!isSecond && firsts != 0) {
                 this.setState({
-                    firsts: +firsts < 0 ? `${firsts}`.slice(1,) : `- ${firsts}`
+                    firsts: `${firsts}`.indexOf('-') != -1 ? `${firsts}`.slice(1,) : `-${firsts}`
                 });
             }
         }
