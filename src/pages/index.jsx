@@ -228,6 +228,44 @@ class Calc extends Component {
         })
     };
 
+    onKey = (event) => {
+        if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'].indexOf(event.key) != -1) {
+            this.numType(event.key);
+        }
+        else {
+            switch (event.key) {
+                case '+':
+                    this.onPlusClick();
+                    break;
+                case '-':
+                    this.onMinClick();
+                    break;
+                case '*':
+                    this.onDelClick();
+                    break;
+                case '/':
+                    this.onDelClick();
+                    break;
+                case '=':
+                    this.onEqClick();
+                    break;
+                case 'Enter':
+                    this.onEqClick();
+                    break;
+                case '.':
+                    this.onDotClick();
+                    break;
+                case 'Backspace':
+                    this.onDClick();
+                    break;
+            }
+        }
+    };
+
+    componentDidMount() {
+        document.addEventListener('keydown', this.onKey)
+    }
+
     render() {
         const { isSecond, firsts, seconds } = this.state;
         return (
