@@ -220,15 +220,17 @@ class Calc extends Component {
     };
 
     onEqClick = () => {
-        const { isSecond, firsts, seconds } = this.state;
-        this.setState({
-            isSecond: true,
-            firsts: isSecond ? `${ firsts } ${ seconds } =` : `${ firsts } =`,
-            seconds: isSecond ? this.calcRes() : firsts,
-            isRes: true,
-            res: isSecond ? this.calcRes() : +firsts,
-            isEq: true
-        })
+        const { isSecond, firsts, seconds, isEq } = this.state;
+        if (!isEq) {
+            this.setState({
+                isSecond: true,
+                firsts: isSecond ? `${ firsts } ${ seconds } =` : `${ firsts } =`,
+                seconds: isSecond ? this.calcRes() : firsts,
+                isRes: true,
+                res: isSecond ? this.calcRes() : +firsts,
+                isEq: true
+            })
+        }
     };
 
     onKey = (event) => {
