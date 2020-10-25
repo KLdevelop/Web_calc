@@ -130,19 +130,59 @@ class Calc extends Component {
     calcRes = () => {
         const { firsts, seconds, res } = this.state;
         const isDot = (`${firsts}`.indexOf('.') != -1 || `${seconds}`.indexOf('.') != -1) ? true : false;
+        const nums = {
+            num1: res,
+            num2: +seconds
+        }; 
         switch (firsts[firsts.length - 1]) {
             case '+':
-                return isDot ? parseFloat(res + +seconds).toFixed(this.greatestNum(res, seconds)) :
-                    res + +seconds;
+                fetch('https://l4.scripthub.ru/api/plus.php', {
+                    method: 'POST',
+                    body: JSON.stringify(nums)
+                }).then(resp => resp.json().then(r => {
+                    this.setState({
+                        seconds: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
+                        r.res,
+                        res: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
+                        r.res
+                    });
+                }));
+                break;
             case '-':
-                return isDot ? parseFloat(res - +seconds).toFixed(this.greatestNum(res, seconds)) :
-                    res - +seconds;
+                fetch('https://l4.scripthub.ru/api/minus.php', {
+                    method: 'POST',
+                    body: JSON.stringify(nums)
+                }).then(resp => resp.json().then(r => {
+                    this.setState({
+                        seconds: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
+                        r.res,
+                        res: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
+                        r.res
+                    });
+                }));
+                break;
             case '*':
-                return isDot ? parseFloat(res * +seconds).toFixed(this.greatestNum(res, seconds)) :
-                    res * +seconds;
+                fetch('https://l4.scripthub.ru/api/multiply.php', {
+                    method: 'POST',
+                    body: JSON.stringify(nums)
+                }).then(resp => resp.json().then(r => {
+                    this.setState({
+                        seconds: r.res,
+                        res: r.res
+                    });
+                }));
+                break;
             case '/':
-                return isDot ? parseFloat(res / +seconds).toFixed(this.greatestNum(res, seconds)) :
-                    res / +seconds;
+                fetch('https://l4.scripthub.ru/api/devide.php', {
+                    method: 'POST',
+                    body: JSON.stringify(nums)
+                }).then(resp => resp.json().then(r => {
+                    this.setState({
+                        seconds: r.res,
+                        res: r.res
+                    });
+                }));
+                break;
         }
     };
 
@@ -164,10 +204,17 @@ class Calc extends Component {
             this.setState({
                 isSecond: true,
                 firsts: isSecond ? (seconds != 0 ? firsts + ` ${ seconds } /` : firsts) : firsts + ' /',
-                seconds: isSecond ? this.calcRes() : +firsts,
-                res: isSecond ? this.calcRes() : +firsts,
                 isRes: true
             });
+            if (isSecond) {
+                this.calcRes();
+            }
+            else {
+                this.setState({
+                    seconds: +firsts,
+                    res: +firsts
+                });
+            }
         }
     };
 
@@ -180,10 +227,17 @@ class Calc extends Component {
             this.setState({
                 isSecond: true,
                 firsts: isSecond ? (seconds != 0 ? firsts + ` ${ seconds } +` : firsts) : firsts + ' +',
-                seconds: isSecond ? this.calcRes() : +firsts,
-                res: isSecond ? this.calcRes() : +firsts,
                 isRes: true
             });
+            if (isSecond) {
+                this.calcRes();
+            }
+            else {
+                this.setState({
+                    seconds: +firsts,
+                    res: +firsts
+                });
+            }
         }
     };
 
@@ -196,10 +250,17 @@ class Calc extends Component {
             this.setState({
                 isSecond: true,
                 firsts: isSecond ? (seconds != 0 ? firsts + ` ${ seconds } -` : firsts) : firsts + ' -',
-                seconds: isSecond ? this.calcRes() : +firsts,
-                res: isSecond ? this.calcRes() : +firsts,
                 isRes: true
             });
+            if (isSecond) {
+                this.calcRes();
+            }
+            else {
+                this.setState({
+                    seconds: +firsts,
+                    res: +firsts
+                });
+            }
         }
     };
 
@@ -212,10 +273,17 @@ class Calc extends Component {
             this.setState({
                 isSecond: true,
                 firsts: isSecond ? (seconds != 0 ? firsts + ` ${ seconds } *` : firsts) : firsts + ' *',
-                seconds: isSecond ? this.calcRes() : firsts,
-                res: isSecond ? this.calcRes() : +firsts,
                 isRes: true
             });
+            if (isSecond) {
+                this.calcRes();
+            }
+            else {
+                this.setState({
+                    seconds: +firsts,
+                    res: +firsts
+                });
+            }
         }
     };
 
@@ -225,11 +293,18 @@ class Calc extends Component {
             this.setState({
                 isSecond: true,
                 firsts: isSecond ? `${ firsts } ${ seconds } =` : `${ firsts } =`,
-                seconds: isSecond ? this.calcRes() : firsts,
                 isRes: true,
-                res: isSecond ? this.calcRes() : +firsts,
                 isEq: true
             })
+            if (isSecond) {
+                this.calcRes();
+            }
+            else {
+                this.setState({
+                    seconds: firsts,
+                    res: +firsts
+                });
+            }
         }
     };
 
@@ -267,8 +342,20 @@ class Calc extends Component {
         }
     };
 
+    testFetch = () => {
+        const nums = {
+            num1: 1,
+            num2: 4
+        }; 
+        fetch('https://l4.scripthub.ru/api/test.php', {
+            method: 'POST',
+            body: JSON.stringify(nums)
+        });
+    };
+
     componentDidMount() {
-        document.addEventListener('keydown', this.onKey)
+        document.addEventListener('keydown', this.onKey);
+        this.testFetch();
     }
 
     render() {
