@@ -9,6 +9,51 @@ $ff: 'Roboto', sans-serif;
     font-size: 28px;
 }
 
+.authLab {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-right: 50px;
+    font-family: $ff;
+    font-weight: normal;
+    font-size: 24px;
+}
+
+.unauthLab {
+    margin-left: 30%;
+    font-size: 24px;
+    font-family: $ff;
+    font-weight: normal;
+    color: red;
+}
+
+.mod {
+    background: #FFFFFF;
+    width: 500px;
+    height: 300px;
+    border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10%;
+    text-align: center;
+    .rgAuth {
+        margin-left: 170px;
+    }
+    .login {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+    input {
+        width: 250px;
+    }
+    .aBttn {
+        margin-top: 20px;
+        font-family: $ff;
+        font-weight: normal;
+        text-transform: unset;
+    }
+}
+
 .calc {
     display: inline-block;
     background: #E4E4E4;

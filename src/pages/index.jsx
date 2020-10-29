@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, Modal, RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 import './index.scss';
 
 class Calc extends Component {
@@ -9,7 +9,15 @@ class Calc extends Component {
         seconds: 0,
         res: 0,
         isRes: false,
-        isEq: false
+        isEq: false,
+        authLab: 'войти',
+        isForm: false,
+        isReg: false,
+        login: '',
+        password: '',
+        wrongLog: false,
+        wrongReg: false,
+        unauth: false
     };
 
     resToNum = (num) => {
@@ -136,51 +144,95 @@ class Calc extends Component {
         }; 
         switch (firsts[firsts.length - 1]) {
             case '+':
-                fetch('https://l4.scripthub.ru/api/plus.php', {
+                nums.module = 'plus';
+                fetch('https://l4.scripthub.ru/api.php', {
                     method: 'POST',
                     body: JSON.stringify(nums)
                 }).then(resp => resp.json().then(r => {
-                    this.setState({
-                        seconds: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
-                        r.res,
-                        res: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
-                        r.res
-                    });
+                    if (!r.msg) {
+                        this.setState({
+                            seconds: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
+                            r.res,
+                            res: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
+                            r.res
+                        });
+                    }
+                    else {
+                        this.setState({
+                            unauth: true,
+                            seconds: 0,
+                            res: 0,
+                            firsts: ''
+                        });
+                    }
                 }));
                 break;
             case '-':
-                fetch('https://l4.scripthub.ru/api/minus.php', {
+                nums.module = 'minus';
+                fetch('hhttps://l4.scripthub.ru/api.php', {
                     method: 'POST',
                     body: JSON.stringify(nums)
                 }).then(resp => resp.json().then(r => {
-                    this.setState({
-                        seconds: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
-                        r.res,
-                        res: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
-                        r.res
-                    });
+                    if (!r.msg) {
+                        this.setState({
+                            seconds: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
+                            r.res,
+                            res: isDot ? parseFloat(r.res).toFixed(this.greatestNum(res, seconds)) :
+                            r.res
+                        });
+                    }
+                    else {
+                        this.setState({
+                            unauth: true,
+                            seconds: 0,
+                            res: 0,
+                            firsts: ''
+                        });
+                    }
                 }));
                 break;
             case '*':
-                fetch('https://l4.scripthub.ru/api/multiply.php', {
+                nums.module = 'multiply';
+                fetch('https://l4.scripthub.ru/api.php', {
                     method: 'POST',
                     body: JSON.stringify(nums)
                 }).then(resp => resp.json().then(r => {
-                    this.setState({
-                        seconds: r.res,
-                        res: r.res
-                    });
+                    if (!r.msg) {
+                        this.setState({
+                            seconds: r.res,
+                            res: r.res
+                        });
+                    }
+                    else {
+                        this.setState({
+                            unauth: true,
+                            seconds: 0,
+                            res: 0,
+                            firsts: ''
+                        });
+                    }
                 }));
                 break;
             case '/':
-                fetch('https://l4.scripthub.ru/api/devide.php', {
+                nums.module = 'divide';
+                fetch('https://l4.scripthub.ru/api.php', {
                     method: 'POST',
                     body: JSON.stringify(nums)
                 }).then(resp => resp.json().then(r => {
-                    this.setState({
-                        seconds: r.res,
-                        res: r.res
-                    });
+                    if (!r.msg) {
+                        this.setState({
+                            seconds: r.res,
+                            res: r.res
+                        });
+                    }
+                    else {
+                        this.setState({
+                            unauth: true,
+                            seconds: 0,
+                            res: 0,
+                            firsts: ''
+                        });
+                    }
                 }));
                 break;
         }
@@ -344,25 +396,187 @@ class Calc extends Component {
 
     testFetch = () => {
         const nums = {
+            module: 'test',
             num1: 1,
             num2: 4
         }; 
-        fetch('https://l4.scripthub.ru/api/test.php', {
+        fetch('https://l4.scripthub.ru/api.php', {
             method: 'POST',
             body: JSON.stringify(nums)
-        });
+        }).then(resp => resp.json().then(r => {
+            if (r.login) {
+                this.setState({
+                    authLab: `Вы вошли под ${ r.login }. Выйти?`
+                });
+            }
+        }));
     };
 
     componentDidMount() {
         document.addEventListener('keydown', this.onKey);
         this.testFetch();
+        console.log(document.cookie);
+    }
+
+    onLoginChange = (e) => {
+        this.setState({
+            login: e.target.value
+        });
+    };
+
+    onPasswordChange = (e) => {
+        this.setState({
+            password: e.target.value
+        });
+    };
+
+    onAuthClick = () => {
+        this.setState({
+            isForm: true
+        });
+    };
+
+    onBackClick = () => {
+        this.setState({
+            isForm: false,
+            login: '',
+            password: ''
+        });
+    };
+
+    registr = () => {
+        const { login, password } = this.state;
+        const options = {
+            module: 'reg',
+            login: login,
+            password: password
+        };
+        fetch('https://l4.scripthub.ru/api.php', {
+            method: 'POST',
+            body: JSON.stringify(options)
+        }).then(resp => resp.json().then(r => {
+            switch (r.msg) {
+                case 'регистрация пошла успешно':
+                    this.auth();
+                    this.setState({
+                        wrongReg: false
+                    });
+                    break;
+                case 'пользователь с таким именем уже существует':
+                    this.setState({
+                        wrongReg: true
+                    });
+                    break;
+            }
+        }));
+    };
+
+    auth = () => {
+        const { login, password } = this.state;
+        const options = {
+            module: 'auth',
+            login: login,
+            password: password
+        };
+        fetch('https://l4.scripthub.ru/api.php', {
+            method: 'POST',
+            body: JSON.stringify(options)
+        }).then(resp => resp.json().then(r => {
+            if (r.auth) {
+                this.setState({
+                    wrongLog: false,
+                    authLab: `Вы вошли под ${ login }. Выйти?`,
+                    unauth: false
+                });
+                this.onBackClick();
+            }
+            else {
+                console.log('false');
+                this.setState({
+                    wrongLog: true
+                });
+            }
+        }).catch(e => {
+            console.log('false');
+            this.setState({
+                wrongLog: true
+            });
+        }));
+    };
+
+    unauth = () => {
+        const options = {
+            module: 'unauth'
+        };
+        fetch('https://l4.scripthub.ru/api.php', {
+            method: 'POST',
+            body: JSON.stringify(options)
+        }).then(r => {
+            this.setState({
+                authLab: 'войти',
+                isForm: true
+            });
+        });
     }
 
     render() {
-        const { isSecond, firsts, seconds } = this.state;
+        const { isSecond, firsts, seconds, authLab, isForm, isReg, login, password,
+            wrongLog, wrongReg, unauth } = this.state;
         return (
             <>
+                <h1 className="authLab" onClick={ authLab == 'войти' ?
+                     this.onAuthClick : this.unauth }>{ authLab }</h1>
                 <h1 className="topH">Calculator</h1>
+                { unauth && <h1 className="unauthLab">Войдите, чтобы пользоваться калькулятором</h1> }
+                <Modal open={ isForm } onBackdropClick={ this.onBackClick }>
+                    <div className="mod">
+                        <RadioGroup className="rgAuth">
+                            <FormControlLabel 
+                                onChange={ () => this.setState({
+                                    isReg: false
+                                }) } 
+                                checked={ !isReg }
+                                value="auth" 
+                                control={ <Radio/> } 
+                                label="Авторизация"
+                            />
+                            <FormControlLabel 
+                                onChange={ () => this.setState({
+                                    isReg: true
+                                }) }
+                                checked={ isReg }
+                                value="reg" 
+                                control={ <Radio/> } 
+                                label="Регистрация"
+                            />
+                        </RadioGroup>
+                        <TextField 
+                            onChange={ this.onLoginChange } 
+                            variant="outlined" 
+                            error={ isReg ? wrongReg : wrongLog }
+                            label="логин" 
+                            className="login"
+                            value={ login }
+                        />
+                        <br/>
+                        <TextField 
+                            onChange={ this.onPasswordChange } 
+                            variant="outlined" 
+                            type="password"
+                            error={ isReg ? wrongReg : wrongLog }
+                            label="пароль"
+                            value={ password }
+                        />
+                        <br/>
+                        <Button 
+                            onClick={ isReg ? this.registr : this.auth } 
+                            className="aBttn" 
+                            variant="outlined"
+                        >
+                            { isReg ? "Зарегистрироваться" : "Войти" }
+                        </Button>
+                    </div>
+                </Modal>
                 <div className="calc">
                     <div className="top">
                         {
